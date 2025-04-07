@@ -3,424 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FuturiImage Pro</title>
-    <style>
-        :root {
-            --background-color: #1a1a1a;
-            --text-color: #fff;
-            --sidebar-color: #2a2a2a;
-            --canvas-background: #333;
-            --button-background: #444;
-            --button-hover-background: #555;
-            --highlight-color: #00ffcc; /* Neon cyan */
-        }
-
-        body {
-            font-family: Arial, sans-serif;
-            background-color: var(--background-color);
-            color: var(--text-color);
-            margin: 0;
-            display: flex;
-            height: 100vh;
-        }
-
-        .sidebar {
-            background-color: var(--sidebar-color);
-            width: 250px;
-            height: 100%;
-            padding: 20px;
-            box-shadow: 2px 0 10px rgba(0, 255, 204, 0.5);
-            overflow-y: auto;
-        }
-
-        .sidebar h1 {
-            font-size: 24px;
-            margin-bottom: 20px;
-            color: var(--highlight-color);
-        }
-
-        .tabs button {
-            display: block;
-            width: 100%;
-            padding: 10px;
-            margin: 5px 0;
-            background-color: var(--button-background);
-            color: var(--text-color);
-            border: 1px solid var(--highlight-color);
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background-color 0.3s, box-shadow 0.3s;
-        }
-
-        .tabs button:hover {
-            background-color: var(--button-hover-background);
-            box-shadow: 0 0 10px var(--highlight-color);
-        }
-
-        .tab-content {
-            margin-top: 20px;
-        }
-
-        .controls {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .controls label {
-            font-size: 14px;
-        }
-
-        .controls input, .controls select, .controls button {
-            padding: 5px;
-            background-color: var(--button-background);
-            color: var(--text-color);
-            border: 1px solid var(--highlight-color);
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .controls input[type="range"] {
-            width: 150px;
-        }
-
-        .container {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-
-        canvas {
-            background-color: var(--canvas-background);
-            max-width: 800px;
-            max-height: 600px;
-            border: 1px solid var(--highlight-color);
-        }
-
-        #helpModal {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: var(--sidebar-color);
-            padding: 20px;
-            border: 2px solid var(--highlight-color);
-            box-shadow: 0 0 20px var(--highlight-color);
-            max-width: 500px;
-            display: none;
-        }
-
-        #helpModal button {
-            margin-top: 20px;
-            background-color: var(--button-background);
-            border: 1px solid var(--highlight-color);
-        }
-
-        #helpModal button:hover {
-            background-color: var(--button-hover-background);
-            box-shadow: 0 0 10px var(--highlight-color);
-        }
-    </style>
+    <title>FuturiEdit Pro</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="sidebar">
-        <h1>FuturiImage Pro</h1>
+        <h1>FuturiEdit Pro</h1>
         <div class="tabs">
             <button onclick="showTab('basic')">Básico</button>
             <button onclick="showTab('text')">Texto</button>
             <button onclick="showTab('colors')">Cores</button>
-            <button onclick="showTab('effects')">Efeitos</button>
             <button onclick="showTab('tools')">Ferramentas</button>
         </div>
+        
+        <!-- Aba Básico -->
         <div id="basic" class="tab-content">
             <div class="controls">
-                <label for="imageInput">Carregar Imagem:</label>
-                <input type="file" id="imageInput" accept="image/*">
-                <button onclick="clearCanvas()">Limpar Imagem</button>
-                <button onclick="downloadImage()">Baixar Imagem</button>
-                <button onclick="undo()">Desfazer</button>
                 <label for="brightness">Brilho:</label>
-                <input type="range" id="brightness" min="0" max="200" value="100" oninput="adjustImage()">
+                <input type="range" id="brightness" min="-100" max="100" value="0" oninput="applyFilters()">
                 <label for="contrast">Contraste:</label>
-                <input type="range" id="contrast" min="0" max="200" value="100" oninput="adjustImage()">
-                <label for="saturate">Saturação:</label>
-                <input type="range" id="saturate" min="0" max="200" value="100" oninput="adjustImage()">
+                <input type="range" id="contrast" min="-100" max="100" value="0" oninput="applyFilters()">
+                <label for="saturation">Saturação:</label>
+                <input type="range" id="saturation" min="0" max="200" value="100" oninput="applyFilters()">
             </div>
         </div>
+
+        <!-- Aba Texto -->
         <div id="text" class="tab-content" style="display:none;">
             <div class="controls">
                 <label for="textInput">Texto:</label>
                 <input type="text" id="textInput" placeholder="Digite o texto">
-                <label for="fontSelect">Fonte:</label>
-                <select id="fontSelect">
-                    <option value="Arial">Arial</option>
-                    <option value="Times New Roman">Times New Roman</option>
-                    <option value="Courier New">Courier New</option>
-                </select>
-                <label for="sizeInput">Tamanho:</label>
-                <input type="number" id="sizeInput" value="30" min="10" max="100">
-                <label for="colorInput">Cor:</label>
-                <input type="color" id="colorInput" value="#ffffff">
+                <label for="fontSize">Tamanho:</label>
+                <input type="number" id="fontSize" value="30" min="10" max="100">
+                <label for="textColor">Cor:</label>
+                <input type="color" id="textColor" value="#ffffff">
                 <button onclick="addText()">Adicionar Texto</button>
             </div>
         </div>
+
+        <!-- Aba Cores -->
         <div id="colors" class="tab-content" style="display:none;">
             <div class="controls">
                 <label for="hue">Matiz:</label>
                 <input type="range" id="hue" min="0" max="360" value="0" oninput="adjustColors()">
-                <label for="saturation">Saturação:</label>
-                <input type="range" id="saturation" min="0" max="200" value="100" oninput="adjustColors()">
                 <label for="lightness">Luminosidade:</label>
                 <input type="range" id="lightness" min="0" max="200" value="100" oninput="adjustColors()">
             </div>
         </div>
-        <div id="effects" class="tab-content" style="display:none;">
-            <div class="controls">
-                <button onclick="applyGrayscale()">Preto e Branco</button>
-                <button onclick="applySepia()">Envelhecer</button>
-                <button onclick="applyInvert()">Inverter Cores</button>
-                <label for="blur">Desfoque:</label>
-                <input type="range" id="blur" min="0" max="10" value="0" oninput="adjustImage()">
-                <button onclick="applySelectiveBlur()">Desfoque Seletivo</button>
-                <button onclick="applySharpen()">Nitidez</button>
-                <button onclick="applyVignette()">Efeito Vignette</button>
-            </div>
-        </div>
+
+        <!-- Aba Ferramentas -->
         <div id="tools" class="tab-content" style="display:none;">
             <div class="controls">
-                <button onclick="removeWatermark()">Removedor de Marca d'Água</button>
-                <label for="brushSize">Tamanho do Pincel:</label>
-                <input type="number" id="brushSize" value="5" min="1" max="50">
-                <label for="brushColor">Cor do Pincel:</label>
-                <input type="color" id="brushColor" value="#ff0000">
-                <button onclick="enableBrush()">Pincel</button>
-                <button onclick="enableClone()">Clone</button>
+                <button onclick="enableWatermarkRemoval()">Remover Marca d'Água</button>
+                <button onclick="enableCrop()">Recortar</button>
+                <button onclick="undo()">Desfazer</button>
             </div>
         </div>
-        <button onclick="showHelp()" style="margin-top: 20px;">Ajuda</button>
+
+        <button class="help-btn" onclick="showHelp()">Ajuda</button>
     </div>
+
     <div class="container">
+        <input type="file" id="imageInput" accept="image/*" onchange="loadImage(event)">
         <canvas id="imageCanvas"></canvas>
     </div>
-    <div id="helpModal">
+
+    <div id="helpModal" style="display:none;">
         <h2>Instruções de Uso</h2>
-        <p>Bem-vindo ao FuturiImage Pro! Aqui estão algumas dicas:</p>
+        <p>Bem-vindo ao FuturiEdit Pro! Veja como usar:</p>
         <ul>
             <li><b>Básico:</b> Ajuste brilho, contraste e saturação.</li>
-            <li><b>Texto:</b> Adicione texto personalizado à imagem.</li>
-            <li><b>Cores:</b> Altere matiz, saturação e luminosidade.</li>
-            <li><b>Efeitos:</b> Aplique desfoque, nitidez, vignette, etc.</li>
-            <li><b>Ferramentas:</b> Use o pincel ou clone para edições manuais.</li>
+            <li><b>Texto:</b> Adicione texto com tamanho e cor personalizados.</li>
+            <li><b>Cores:</b> Altere matiz e luminosidade da imagem.</li>
+            <li><b>Ferramentas:</b> Remova marcas d'água ou recorte a imagem.</li>
         </ul>
         <button onclick="hideHelp()">Fechar</button>
     </div>
 
-    <script>
-        const imageInput = document.getElementById('imageInput');
-        const imageCanvas = document.getElementById('imageCanvas');
-        const ctx = imageCanvas.getContext('2d');
-        let img = new Image();
-        let history = [];
-        let isDrawing = false;
-        let lastX = 0, lastY = 0;
-        let isCloning = false;
-        let cloneSource = null;
-
-        imageInput.addEventListener('change', (event) => {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    img.onload = () => {
-                        imageCanvas.width = img.width;
-                        imageCanvas.height = img.height;
-                        ctx.drawImage(img, 0, 0);
-                        saveState();
-                    };
-                    img.src = e.target.result;
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-
-        function showTab(tabName) {
-            document.querySelectorAll('.tab-content').forEach(tab => tab.style.display = 'none');
-            document.getElementById(tabName).style.display = 'block';
-        }
-
-        function saveState() {
-            history.push(imageCanvas.toDataURL());
-            if (history.length > 10) history.shift(); // Limita o histórico
-        }
-
-        function undo() {
-            if (history.length > 1) {
-                history.pop();
-                const lastState = new Image();
-                lastState.onload = () => {
-                    ctx.clearRect(0, 0, imageCanvas.width, imageCanvas.height);
-                    ctx.drawImage(lastState, 0, 0);
-                };
-                lastState.src = history[history.length - 1];
-            }
-        }
-
-        function clearCanvas() {
-            ctx.clearRect(0, 0, imageCanvas.width, imageCanvas.height);
-            saveState();
-        }
-
-        function downloadImage() {
-            const link = document.createElement('a');
-            link.href = imageCanvas.toDataURL('image/png');
-            link.download = 'imagem_editada.png';
-            link.click();
-        }
-
-        function adjustImage() {
-            if (!img.src) return;
-            const brightness = document.getElementById('brightness').value;
-            const contrast = document.getElementById('contrast').value;
-            const saturate = document.getElementById('saturate').value;
-            const blur = document.getElementById('blur').value;
-            ctx.filter = `brightness(${brightness}%) contrast(${contrast}%) saturate(${saturate}%) blur(${blur}px)`;
-            ctx.drawImage(img, 0, 0);
-            saveState();
-        }
-
-        function adjustColors() {
-            if (!img.src) return;
-            const hue = document.getElementById('hue').value;
-            const saturation = document.getElementById('saturation').value;
-            const lightness = document.getElementById('lightness').value;
-            ctx.filter = `hue-rotate(${hue}deg) saturate(${saturation}%) brightness(${lightness}%)`;
-            ctx.drawImage(img, 0, 0);
-            saveState();
-        }
-
-        function addText() {
-            const text = document.getElementById('textInput').value;
-            const font = document.getElementById('fontSelect').value;
-            const size = document.getElementById('sizeInput').value;
-            const color = document.getElementById('colorInput').value;
-            ctx.font = `${size}px ${font}`;
-            ctx.fillStyle = color;
-            ctx.fillText(text, 50, 50);
-            saveState();
-        }
-
-        function applyGrayscale() {
-            ctx.filter = 'grayscale(100%)';
-            ctx.drawImage(img, 0, 0);
-            saveState();
-        }
-
-        function applySepia() {
-            ctx.filter = 'sepia(100%)';
-            ctx.drawImage(img, 0, 0);
-            saveState();
-        }
-
-        function applyInvert() {
-            ctx.filter = 'invert(100%)';
-            ctx.drawImage(img, 0, 0);
-            saveState();
-        }
-
-        function applySharpen() {
-            ctx.filter = 'contrast(150%) brightness(110%)';
-            ctx.drawImage(img, 0, 0);
-            saveState();
-        }
-
-        function applyVignette() {
-            ctx.drawImage(img, 0, 0);
-            const gradient = ctx.createRadialGradient(
-                imageCanvas.width / 2, imageCanvas.height / 2, 0,
-                imageCanvas.width / 2, imageCanvas.height / 2, Math.max(imageCanvas.width, imageCanvas.height) / 2
-            );
-            gradient.addColorStop(0, 'rgba(0,0,0,0)');
-            gradient.addColorStop(1, 'rgba(0,0,0,0.5)');
-            ctx.fillStyle = gradient;
-            ctx.fillRect(0, 0, imageCanvas.width, imageCanvas.height);
-            saveState();
-        }
-
-        function removeWatermark() {
-            alert("Use a ferramenta de clone ou pincel para cobrir a marca d'água manualmente.");
-        }
-
-        function enableBrush() {
-            isCloning = false;
-            imageCanvas.addEventListener('mousedown', startDrawing);
-            imageCanvas.addEventListener('mousemove', draw);
-            imageCanvas.addEventListener('mouseup', stopDrawing);
-            imageCanvas.addEventListener('mouseout', stopDrawing);
-        }
-
-        function enableClone() {
-            isCloning = true;
-            alert("Clique para selecionar a área fonte, depois pinte na área desejada.");
-            imageCanvas.addEventListener('mousedown', startClone);
-            imageCanvas.addEventListener('mousemove', drawClone);
-            imageCanvas.addEventListener('mouseup', stopDrawing);
-        }
-
-        function startDrawing(e) {
-            isDrawing = true;
-            [lastX, lastY] = [e.offsetX, e.offsetY];
-        }
-
-        function draw(e) {
-            if (!isDrawing) return;
-            ctx.beginPath();
-            ctx.moveTo(lastX, lastY);
-            ctx.lineTo(e.offsetX, e.offsetY);
-            ctx.strokeStyle = document.getElementById('brushColor').value;
-            ctx.lineWidth = document.getElementById('brushSize').value;
-            ctx.stroke();
-            [lastX, lastY] = [e.offsetX, e.offsetY];
-        }
-
-        function startClone(e) {
-            if (!cloneSource) {
-                cloneSource = { x: e.offsetX, y: e.offsetY };
-            } else {
-                isDrawing = true;
-                [lastX, lastY] = [e.offsetX, e.offsetY];
-            }
-        }
-
-        function drawClone(e) {
-            if (!isDrawing || !cloneSource) return;
-            const size = document.getElementById('brushSize').value;
-            ctx.drawImage(imageCanvas, 
-                cloneSource.x - size / 2, cloneSource.y - size / 2, size, size,
-                e.offsetX - size / 2, e.offsetY - size / 2, size, size
-            );
-            [lastX, lastY] = [e.offsetX, e.offsetY];
-        }
-
-        function stopDrawing() {
-            isDrawing = false;
-            if (isCloning) cloneSource = null;
-            saveState();
-        }
-
-        function applySelectiveBlur() {
-            alert("Clique e arraste para selecionar a área de desfoque (funcionalidade simplificada).");
-            // Para uma versão completa, seria necessário capturar a área e aplicar desfoque seletivo.
-        }
-
-        function showHelp() {
-            document.getElementById('helpModal').style.display = 'block';
-        }
-
-        function hideHelp() {
-            document.getElementById('helpModal').style.display = 'none';
-        }
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
